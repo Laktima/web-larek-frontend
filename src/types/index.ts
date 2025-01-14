@@ -12,7 +12,6 @@ interface IPayment {
     telNum: string;
     email: string;
     paymentType: string;
-    buy(): void;
 }
 
 interface IBasketModel {
