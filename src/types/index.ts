@@ -1,4 +1,4 @@
-interface IProduct {
+export interface IProduct {
     id: string;
     title: string;
     category: string;
@@ -7,14 +7,14 @@ interface IProduct {
     image: string;
 }
 
-interface IPayment {
+export interface IPayment {
     adress: string;
     telNum: string;
     email: string;
     paymentType: string;
 }
 
-interface IBasketModel {
+export interface IBasketData {
     items: Map<string, number>;
     add(id:string): void;
     remove(id: string): void;
@@ -22,16 +22,15 @@ interface IBasketModel {
     goToPayment(): void;
 }
 
-interface CatalogModel {
-    items: IProduct[];
-    setItems(items: IProduct[]): void;
-    getProduct(id: string): IProduct;
+export interface ICatalogData {
+    products: IProduct[];
+    getProduct(id: string): IProduct | null;
 }
 
-interface IView {
+export interface IView {
     render(data?: object): HTMLElement;
 }
 
-interface IViewConstructor {
+/*interface IViewConstructor {
     new (container: HTMLElement, events?: IEventEmitter): IView;
-}
+}*/
