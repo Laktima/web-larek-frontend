@@ -1,3 +1,5 @@
+import { Product } from "../components/Product";
+
 export interface IProduct {
     id: string;
     title: string;
@@ -15,11 +17,9 @@ export interface IPayment {
 }
 
 export interface IBasketData {
-    items: Map<string, number>;
-    add(id:string): void;
+    products: IProduct[];
+    add(product: IProduct): void;
     remove(id: string): void;
-    getTotalPrice(): number;
-    goToPayment(): void;
 }
 
 export interface ICatalogData {
@@ -34,3 +34,11 @@ export interface IView {
 /*interface IViewConstructor {
     new (container: HTMLElement, events?: IEventEmitter): IView;
 }*/
+
+export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+export interface IApi {
+    baseUrl: string;
+    get<T>(uri: string): Promise<T>;
+    post<T>(uri: string, data: object, method?: ApiPostMethods): Promise<T>;
+}

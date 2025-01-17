@@ -21,7 +21,6 @@ export class CatalogData implements ICatalogData {
         let curProduct = null;
         this._products.forEach((product) => {
             if (product.id === id) {
-                console.log(product.id, id)
                 curProduct = product;
             }
         })
