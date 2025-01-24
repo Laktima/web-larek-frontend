@@ -19,23 +19,31 @@ export class BasketData implements IBasketData {
         return this._products;
     }
 
-   add(product: IProduct): void {
+    add(product: IProduct): void {
       this._products.push(product); 
       this._totalPrice += product.price;
-   } 
+    } 
 
-   remove(id: string): void {
+    remove(id: string): void {
        const filtered = this._products.filter((product) => {
             return id !== product.id
        });
        this._products = filtered;
        this._totalPrice = this.getTotalPrice();
-   }
+    }
 
-   getTotalPrice(): number {
+    getTotalPrice(): number {
         return this._products.reduce((acc, product) => {
             return acc + product.price;
         }, 0);
-   }
+    }
 
+    checkProductInBasket(id: string): boolean {
+        const ids = this._products.map((product) => product.id);
+        return ids.includes(id);
+    }
+
+    clearBasket(): void {
+        this._products = [];
+    }
 }

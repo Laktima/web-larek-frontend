@@ -1,5 +1,3 @@
-import { Product } from "../components/Product";
-
 export interface IProduct {
     id: string;
     title: string;
@@ -10,10 +8,10 @@ export interface IProduct {
 }
 
 export interface IPayment {
-    adress: string;
-    telNum: string;
+    address: string;
+    phone: string;
     email: string;
-    paymentType: string;
+    payment: string;
 }
 
 export interface IBasketData {
@@ -27,13 +25,20 @@ export interface ICatalogData {
     getProduct(id: string): IProduct | null;
 }
 
-export interface IView {
-    render(data?: object): HTMLElement;
+export interface PaymentRequest extends IPayment {
+    total: number;
+    items: string[];
 }
 
-/*interface IViewConstructor {
-    new (container: HTMLElement, events?: IEventEmitter): IView;
-}*/
+export interface PaymentResponse {
+    total: number;
+    id: string;
+}
+
+export type IProductResponse = {
+    total: number;
+    items: IProduct[];
+}
 
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 

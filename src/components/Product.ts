@@ -1,5 +1,6 @@
 import { IEvents } from "./base/events";
 import { cloneTemplate } from "../utils/utils";
+import { CDN_URL } from "../utils/constants";
 import { IProduct } from "../types";
 
 export class Product {
@@ -12,6 +13,7 @@ export class Product {
     protected _productId: string;  
     protected _basketButton: HTMLButtonElement;
     protected _deleateButton: HTMLButtonElement;
+    protected _itemIndex: HTMLElement;
     protected _events: IEvents; 
 
     constructor(template: HTMLTemplateElement, events: IEvents) {
@@ -24,6 +26,7 @@ export class Product {
         this._description = this._container.querySelector('.card__text');
         this._basketButton = this._container.querySelector('.button');
         this._deleateButton = this._container.querySelector('.basket__item-delete');
+        this._itemIndex = this._container.querySelector('.basket__item-index');
 
         if (this._container && this._category && !this._description) {
         this._container.addEventListener('click', () => {
@@ -38,6 +41,7 @@ export class Product {
             this._events.emit('product:addBasket', {
                 productId: this._productId,
             })
+            this.disableAddButton();
         });
         }
 
@@ -50,13 +54,18 @@ export class Product {
         }
     }
 
-    render(product: IProduct) {
+    disableAddButton() {
+        this._basketButton.disabled = true;
+    }
+
+    render(product: IProduct, index?: number) {
         this._productId = product.id;
         this._name.textContent = product.title;
         this._price.textContent = product.price + ' синапсов';
         if (this._category) this._category.textContent = product.category;
-        if(this._image) this._image.setAttribute('src', product.image);
+        if(this._image) this._image.setAttribute('src', CDN_URL + product.image);
         if (this._description) this._description.textContent = product.description;
+        if (this._itemIndex && index) this._itemIndex.textContent = index.toString();
         return this._container; 
     }
 }
