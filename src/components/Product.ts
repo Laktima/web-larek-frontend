@@ -58,11 +58,35 @@ export class Product {
         this._basketButton.disabled = true;
     }
 
+    getColorClassName(category: string) {
+        switch(category) {
+            case 'софт-скил': {
+                return 'card__category_soft'
+            }
+            case 'дополнительное': {
+                return 'card__category_additional'
+            }
+            case 'кнопка': {
+                return 'card__category_button'
+            }
+            case 'хард-скил': {
+                return 'card__category_hard'
+            }
+            default : {
+                return 'card__category_other'
+            }
+        }
+    }
+
     render(product: IProduct, index?: number) {
         this._productId = product.id;
         this._name.textContent = product.title;
-        this._price.textContent = product.price + ' синапсов';
-        if (this._category) this._category.textContent = product.category;
+        this._price.textContent = product.price ? product.price + ' синапсов' : 'Безценно';
+        if (this._category) {
+            this._category.textContent = product.category;
+            this._category.classList.remove('card__category_other');
+            this._category.classList.add(this.getColorClassName(product.category));
+        }
         if(this._image) this._image.setAttribute('src', CDN_URL + product.image);
         if (this._description) this._description.textContent = product.description;
         if (this._itemIndex && index) this._itemIndex.textContent = index.toString();

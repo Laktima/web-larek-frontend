@@ -7,14 +7,12 @@ export class Success {
     protected _totalPrice: HTMLElement;
     protected _closeButton: HTMLButtonElement;
 
-    constructor(template: HTMLTemplateElement, events: IEvents, totalPrice: number) {
+    constructor(template: HTMLTemplateElement, events: IEvents) {
         this._events = events;
         this._container = cloneTemplate(template);
         this._totalPrice = this._container.querySelector('.order-success__description')
         this._closeButton = this._container.querySelector('.button');
         
-        this._totalPrice.textContent = 'Списано ' + totalPrice + 'синапсов'
-
         this._closeButton.addEventListener('click', () => {
             this._events.emit('success:closeButtonClick');
         });
@@ -22,5 +20,9 @@ export class Success {
 
     render() {
         return this._container;
+    }
+
+    setTotalPrice(totalPrice: number) {
+        this._totalPrice.textContent = 'Списано ' + totalPrice + ' синапсов'
     }
 }

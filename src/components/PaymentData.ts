@@ -47,4 +47,13 @@ export class PaymentData implements IPayment {
     contactsStepValidate() {
         return this._phone && this._email;
     }
+
+    getOrderData(): IPayment {
+        return {
+            payment: this._payment,
+            email: this._email,
+            phone: this._phone,
+            address: this._address,
+        }
+    }
 }

@@ -33,12 +33,12 @@ const contactsTemplate: HTMLTemplateElement = document.querySelector('#contacts'
 const successTemplate: HTMLTemplateElement = document.querySelector('#success');
 
 const gallaryContainer = new ProductsContainer(document.querySelector('.gallery'));
-const basketContainer = new ProductsContainer(document.querySelector('.basket__list'));
 
-const basketButton = document.querySelector('.header__basket');
 const modalContainer = new Modal(document.querySelector('#modal-container'), events);
+const basket = new Basket(basketTemplate, events);
+const payment = new Payment(orderTemplate, events);
+const success = new Success(successTemplate, events);
 
-const basketCounter = document.querySelector('.header__basket-counter');
 
 api.getCards().then((res) => {
     const products = res.items;
@@ -47,37 +47,15 @@ api.getCards().then((res) => {
 }).catch((error) => console.log(error))
 
 const changeBasketData = () => {
-    const basket = new Basket(basketTemplate, events);
     basket.setPrice(basketData.getTotalPrice());
     const productsArray = basketData.products.map((product, index) => {
         const productCard = new Product(productBasketTemplate, events);
         return productCard.render(product, index+1);
     })
-    const basketHTML = basketContainer.render({ catalog: productsArray});
-    modalContainer.setContent(basket.render(basketHTML));
+    basket.setBasketList(productsArray);
+    modalContainer.setContent(basket.render());
     basket.setDisableOrderButton(basketData.getTotalPrice() === 0);
 }
-
-const changeBasketCounter = () => {
-    basketCounter.textContent = basketData.products.length.toString();
-}
-
-const getOrderRequestData = (): PaymentRequest => {
-    const ids = basketData.products.filter((product) => product.price !== null).map((product) => product.id);
-    return {
-        payment: paymentData._payment,
-        email: paymentData._email,
-        phone: paymentData._phone,
-        address: paymentData._address,
-        total: basketData.getTotalPrice(),
-        items: ids,
-    }
-}
-
-basketButton.addEventListener('click', () => {
-    changeBasketData();
-    modalContainer.open();
-});
 
 events.on('initialData:loaded', () => {
     const productsArray = catalogData.products.map((product) => {
@@ -99,24 +77,23 @@ events.on('product:addBasket', (eventObject: { productId: string}) => {
     const { productId } = eventObject;
     const product = catalogData.getProduct(productId);
     basketData.add(product);
-    changeBasketCounter()
+    basket.setBasketCounter(basketData.products.length);
 })
 
 events.on('product:delete', (eventObject: { productId: string}) => {
     const { productId } = eventObject;
     basketData.remove(productId);
-    changeBasketCounter();
+    basket.setBasketCounter(basketData.products.length);
     changeBasketData();
 })
 
 events.on('basket:order', () => {
-    const payment = new Payment(orderTemplate, events);
     modalContainer.setContent(payment.render());
 })
 
 events.on('payment:addresChange', (eventObject: { value: string, payment: Payment}) => {
     const { value, payment } = eventObject;
-    paymentData._address = value;
+    paymentData.address = value;
     if (paymentData.paymentStepValidate()) payment.setEnableButton()
     else payment.setDisableButton();
 })
@@ -148,17 +125,25 @@ events.on('contacts:emailChange', (eventObject: { value: string, contacts: Conta
 });
 
 events.on('contacts:payButtonClick', () => {
-    const requestData: PaymentRequest = getOrderRequestData();
-    api.order(requestData)
+    const requestData: PaymentRequest = {
+        ...paymentData.getOrderData(), items: basketData.getList(), total: basketData.getTotalPrice()
+    };
+    api.buyProducts(requestData)
     .then((res) => {
-        const success = new Success(successTemplate, events, res.total);
+        success.setTotalPrice(basketData.getTotalPrice());
         modalContainer.setContent(success.render());
         basketData.clearBasket();
-        changeBasketCounter();
+        basket.setBasketCounter(basketData.products.length);
     })
     .catch((error) => console.log(error));
 });
 
 events.on('success:closeButtonClick', () => {
     modalContainer.close();
+});
+
+events.on('basketButton:click', () => {
+    changeBasketData();
+    basket.setBasketCounter(basketData.products.length);
+    modalContainer.open();
 });

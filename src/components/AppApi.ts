@@ -11,7 +11,7 @@ export class AppApi {
 		return this._baseApi.get<IProductResponse>(`/product`).then((result: IProductResponse) => result);
 	}
 
-    order(data: PaymentRequest): Promise<PaymentResponse> {
+    buyProducts(data: PaymentRequest): Promise<PaymentResponse> {
 		return this._baseApi.post<PaymentResponse>(`/order`, data, 'POST').then((result: PaymentResponse) => result);
 	}
 }

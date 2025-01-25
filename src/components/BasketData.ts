@@ -4,7 +4,6 @@ import { IEvents } from "./base/events"
 export class BasketData implements IBasketData {
     protected _products: IProduct[];
     protected _events: IEvents;
-    protected _totalPrice: number;
 
     constructor(events: IEvents) {
         this._events = events;
@@ -21,7 +20,6 @@ export class BasketData implements IBasketData {
 
     add(product: IProduct): void {
       this._products.push(product); 
-      this._totalPrice += product.price;
     } 
 
     remove(id: string): void {
@@ -29,7 +27,6 @@ export class BasketData implements IBasketData {
             return id !== product.id
        });
        this._products = filtered;
-       this._totalPrice = this.getTotalPrice();
     }
 
     getTotalPrice(): number {
@@ -45,5 +42,9 @@ export class BasketData implements IBasketData {
 
     clearBasket(): void {
         this._products = [];
+    }
+
+    getList(): string[] {
+        return this._products.filter((product) => product.price !== null).map((product) => product.id);
     }
 }
